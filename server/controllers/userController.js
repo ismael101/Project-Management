@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Users = require('../models/users')
 const config = require('../config')
-const multer = require('multer')
-const upload = multer({dest:'uploads/'})
 
 exports.user_signup = (req,res,next) => {
     Users.find({email: req.body.email},{username:req.body.username})
@@ -49,6 +47,43 @@ exports.user_signup = (req,res,next) => {
     })
     .catch(err => {
         res.status(404).json({
+            error:err
+        })
+    })
+}
+
+exports.user_login = (req,res,next) => {
+    Users.find({username: req.body.username})
+    .then(user => {
+       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+            if(err){
+                return res.status(401).json({
+                    message:'Auth Failed'
+                })
+            }
+            if(result){
+                const token = jwt.sign({
+                    id: user[0]._id,
+                    username:user[0].username,
+                    email:user[0].email
+                },
+                 config.encrypt_config.key,
+                 {
+                     expiresIn: '240'
+                 }   
+                )
+                res.status(200).json({
+                    message:'Auth Successful',
+                    token:token
+                })
+            }
+            res.status(401).json({
+                message:'Auth Failed'
+            })
+       })
+    })
+    .catch(err => {
+        res.status(500).json({
             error:err
         })
     })
