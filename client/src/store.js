@@ -9,8 +9,8 @@ export default new Vuex.Store({
     state:{
         token:null,
         username:'Ismael Mohamed',
-        userMode:true,
-        viewMode: true,
+        userMode:false,
+        demoMode: false,
         personalProjects:[
             { id: 1, title: 'Design a new website', due: '1st Jan 2019', status: 'ongoing', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
             { id: 2, title: 'Code up the homepage', due: '10th Jan 2019', status: 'complete', content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!'},
@@ -35,12 +35,10 @@ export default new Vuex.Store({
     mutations:{
         setToken(state, token){
             state.token = token
-            state.userMode == !!(token)
-            state.viewMode == (token)
 
         },
-        setUser(state, user){
-            state.user = user
+        setUser(state, username){
+            state.user = username
         },
         setPersonalProjects(state, personalProjects){
             state.personalProjects = personalProjects
@@ -51,6 +49,12 @@ export default new Vuex.Store({
         },
         setTeamMembers(state, teamMembers){
             state.teamMembers =  teamMembers
+        },
+        setUserMode(state, mode){
+            state.userMode = mode
+        },
+        setDemoMode(state, mode){
+            state.demoMode = mode
         }
     },
     actions:{
@@ -68,6 +72,12 @@ export default new Vuex.Store({
         },
         setTeamMembers({commit}, teamMembers){
             commit('setTeamMembers', teamMembers)
+        },
+        setUserMode({commit}, mode){
+            commit('setUserMode', mode)
+        },
+        setDemoMode({commit}, mode){
+            commit('setDemoMode', mode)
         }
 
     }

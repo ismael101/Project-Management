@@ -78,7 +78,7 @@ export default {
         title:'',
         titleRules:[
           (v) => !!v || 'Title is Required',
-          (v) => v.length <= 6 || 'Title must be at least 7 Characters Long'
+          (v) => v.length >= 6 || 'Title must be at least 7 Characters Long'
         ],
         person:'',
         personRules:[
@@ -95,7 +95,7 @@ export default {
         content:'',
         contentRules:[
           (v) => !!v || 'Content is Required',
-          (v) => v.length <= 10 || 'Content must be at least 10 Characters Long'
+          (v) => v.length >= 10 || 'Content must be at least 10 Characters Long'
         ]
        
       },

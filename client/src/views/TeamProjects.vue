@@ -4,8 +4,8 @@
       <v-flex xs12 sm6 md6 lg6>
     <h1 class="subheading grey--text my-10" >Team Projects</h1>
       </v-flex>
-      <v-flex xs12 sm6 md6 lg6>
-    <AddTeamProject class='my-12 justify-end'></AddTeamProject>
+      <v-flex xs12 sm6 md6 lg6 class="text-right">
+    <AddTeamProject class='my-12'></AddTeamProject>
       </v-flex>
     </v-layout>
     <v-divider></v-divider>
@@ -35,26 +35,26 @@
       <v-card flat v-for="project in this.$store.state.teamProjects" :key="project.id">
         <v-layout row wrap :class="`pa-3 project ${project.status}`">
           <v-flex xs12 md4>
-            <div class="caption grey--text">Project title</div>
-            <div>{{ project.title }}</div>
+            <div class="caption grey--text text-center">Project title</div>
+            <div class="text-center">{{ project.title }}</div>
           </v-flex>
           <v-flex xs12 sm3 md2>
-            <div class="caption grey--text">Person</div>
-            <div>{{ project.person }}</div>
+            <div class="caption grey--text text-center">Person</div>
+            <div class="text-center">{{ project.person }}</div>
           </v-flex>
           <v-flex xs4 sm3 md2>
-            <div class="caption grey--text">Due by</div>
-            <div>{{ project.due }}</div>
+            <div class="caption grey--text text-center">Due by</div>
+            <div class="text-center">{{ project.due }}</div>
           </v-flex>
           <v-flex xs4 sm3 md2>
-            <div class="right">
+            <div class="center">
               <v-chip small :class="`${project.status} white--text my-2 caption`">{{ project.status }}</v-chip>
             </div>
           </v-flex>
           <v-flex xs4 sm3 md2>
-            <v-btn-toggle class='mt-2'>
+            <v-btn-toggle class='mt-2 text-center'>
               <EditTeamProject v-bind:id="project.id"></EditTeamProject>
-              <v-icon>delete</v-icon>
+              <v-icon @click='deleteProject'>delete</v-icon>
             </v-btn-toggle>
           </v-flex>
         </v-layout>
@@ -82,8 +82,19 @@ export default {
   methods: {
     sortBy(prop) {
       this.$store.state.teamProjects.sort((a,b) => a[prop] < b[prop] ? -1 : 1)
+    },
+    deleteProject(){
+
+    },
+    fetchProjects(){
+      if(this.$store.state.userMode){
+        this.$
+      }
     }
   },
+  mounted(){
+    
+  }
   
 }
 </script>

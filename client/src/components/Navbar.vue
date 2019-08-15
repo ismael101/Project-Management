@@ -2,17 +2,17 @@
 <nav>
 
     <v-app-bar flat app >
-    <v-app-bar-nav-icon @click='drawer = !drawer' v-if='$store.state.userMode | $store.state.viewMode'></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click='drawer = !drawer' v-if='$store.state.userMode || $store.state.demoMode'></v-app-bar-nav-icon>
       <v-toolbar-title class="text-uppercase grey--text">
         <span class="font-weight-light">Project Manager</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text color="grey" v-if='$store.state.userMode | $store.state.viewMode'>
+      <v-btn text color="grey" v-on:click='signout' v-if='$store.state.userMode || $store.state.demoMode'>
         <span>Sign Out</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
     </v-app-bar>
-     <v-navigation-drawer width=300 app v-model="drawer" class="cyan" v-if='$store.state.userMode | $store.state.viewMode'>
+     <v-navigation-drawer width=300 app v-model="drawer" class="cyan" v-if='$store.state.userMode || $store.state.demoMode'>
        <v-container>
           <v-layout column align-center>
         <v-flex class="mt-5">
@@ -63,12 +63,12 @@ export default {
                 {
                     icon:'dashboard',
                     title:'Team Projects',
-                    route:'/teamprojects'
+                    route:'/dashboard'
                 },
                 {
                     icon:'folder',
                     title:'Personal Projects',
-                    route:'/personalprojects'
+                    route:'/personal'
                 },
                 {
                     icon:'person',
@@ -80,6 +80,14 @@ export default {
           avatar:'/avatar5.png'
         }
     },
+    methods:{
+      signout(){
+        this.$store.dispatch('setToken', null)
+        this.$store.dispatch('setUserMode', false)
+        this.$store.dispatch('setDemoMode',false)
+        this.$router.push({name:'login'})
+      }
+    }
 
 }
 </script>

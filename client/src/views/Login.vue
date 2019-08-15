@@ -10,7 +10,7 @@
                         <v-text-field v-model='form.password' required outlined label='Password'></v-text-field>
                         <v-layout row wrap>
                             <v-btn-toggle rounded>
-                        <v-btn outlined color='cyan' @click='submit'>Login</v-btn> <v-btn text disabled>OR</v-btn> <v-btn outlined color='cyan' @click='view'>View</v-btn>
+                        <v-btn outlined color='cyan' @click='submit'>Login</v-btn> <v-btn text disabled>OR</v-btn> <v-btn outlined color='cyan' @click='demo'>Demo</v-btn>
                             </v-btn-toggle>
                         </v-layout>
                     </v-form>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import jsonwebtoken from 'jsonwebtoken'
+
 export default {
     data(){
         return{
@@ -34,10 +36,21 @@ export default {
     },
     methods:{
         submit(){
-            console.log(this.form)
+            this.$users.login(this.form)
+            .then(res => {
+                this.$store.dispatch('setToken',res.token)
+                let userinfo = jsonwebtoken.decode(res.token)
+                this.$store.dispatch('setUser', userinfo.username)
+                this.$store.dispatch('setUserMode', true)
+                this.$router.push({name:'dashboard'})
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
-        view(){
-            
+        demo(){
+            this.$store.dispatch('setDemoMode', true)
+            this.$router.push({name:'dashboard'})
         }
     }
 }

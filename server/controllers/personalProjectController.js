@@ -18,7 +18,7 @@ exports.create_projects = (req,res,next) => {
     const project = new PersonalProjects({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
-        due: req.body.due || null,
+        due: req.body.due,
         status: req.body.status,
         content: req.body.content
     }) 

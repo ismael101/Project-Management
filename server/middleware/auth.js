@@ -9,7 +9,8 @@ module.exports = (req,res,next) => {
         next()
     }catch(err){
         return res.status(401).json({
-            message:'Token Auth Failed'
+            message:'Token Auth Failed',
+            error:err
         })
     }
 }

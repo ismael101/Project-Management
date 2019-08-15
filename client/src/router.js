@@ -3,7 +3,9 @@ import Router from 'vue-router'
 import TeamProjects from './views/TeamProjects'
 import PersonalProjects from './views/PersonalProjects'
 import Team from './views/Team'
+import NotFound from './views/NotFound'
 import Login from './views/Login'
+import store from './store';
 
 Vue.use(Router)
 
@@ -15,22 +17,66 @@ export default new Router({
       path:'/',
       name:'login',
       component:Login,
+      beforeEnter: (to,from,next) => {
+        if(from.name === 'dashboard' || from.name ==='team' || from.name === 'personal'){
+          const answer = window.confirm('Are You Sure You Want To Sign Out?')
+          if(answer){
+            next()
+          }else{
+            next(false)
+          }
+
+        }else{
+          next()
+        }
+      }
     },
     {
-      path: '/teamprojects',
+      path: '/dashboard',
       name: 'dashboard',
-      component: TeamProjects
+      component: TeamProjects,
+      beforeEnter: (to,from,next) => {
+        if(store.state.userMode === false && store.state.demoMode === false){
+          next({name:'login'})
+        }
+        else{
+          next()
+        }
+      }
+      
     },
     {
-      path: '/personalprojects',
+      path: '/personal',
       name: 'projects',
-      component:PersonalProjects
+      component:PersonalProjects,
+      beforeEnter: (to,from,next) => {
+        if(store.state.userMode == false && store.state.demoMode == false){
+          next({name:'login'})
+        }
+        else{
+          next()
+        }
+      }
     },
     {
       path:'/team',
       name:'team',
-      component:Team
+      component:Team,
+      beforeEnter: (to,from,next) => {
+        if(store.state.userMode == false && store.state.demoMode == false){
+          next({name:'login'})
+        }
+        else{
+          next()
+        }
+      }
     },
+    {
+      path:'*',
+      name:'notfound',
+      component:NotFound,
+      
+    }
 
   ]
 })

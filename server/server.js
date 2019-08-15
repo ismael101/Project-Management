@@ -3,7 +3,10 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const config = require('./config')
-const upload = require('./uploads')
+const userRoutes = require('./routes/users')
+const teamRoutes = require('./routes/teamProjects')
+const personalRoutes = require('./routes/personalProjects')
+
 const app = express()
 
 mongoose.connect(config.database_config.host,{useNewUrlParser:true, useCreateIndex:true})
@@ -14,14 +17,16 @@ mongoose.connect(config.database_config.host,{useNewUrlParser:true, useCreateInd
             console.log('Error Connecting', err)
         })
 
-express.static(upload)
+app.use('/uploads', express.static('uploads'));
 
 app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 
 
-//apis
+app.use('/users',userRoutes)
+app.use('/teams',teamRoutes)
+app.use('/personal',personalRoutes)
 
 
 app.use(function(req,res,next){
