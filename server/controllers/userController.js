@@ -25,7 +25,7 @@ exports.user_signup = (req,res,next) => {
                         email:req.body.email,
                         username:req.body.username,
                         password:hash,
-                        profilepic:req.file.path
+                        profilepic: 'localhost:3000/' + req.file.path
                     });
                     
                     user.save()
@@ -59,7 +59,7 @@ exports.user_login = (req,res,next) => {
         bcrypt.compare(req.body.password,user[0].password)
         .then(result => {
             if(result){
-                const token = jwt.sign({id: user[0].id,username:user[0].username,email:user[0].email},config.encrypt_config.key,{expiresIn:'1h'})
+                const token = jwt.sign({id: user[0].id, teamid: user[0]._teamid,username:user[0].username,email:user[0].email},config.encrypt_config.key,{expiresIn:'3h'})
                 res.status(200).json({
                     message:'Auth Succesfull',
                     token:token
@@ -86,7 +86,7 @@ exports.user_login = (req,res,next) => {
 }
 
 exports.user_team = (req,res,next) => {
-    Users.find({_teamid:req.body._teamid})
+    Users.find({_teamid:req.params.teamid},'username email profilepic')
         .then(team => {
             if(team.length >0){
                 res.status(200).json(team)

@@ -17,10 +17,10 @@ exports.get_all_projects = (req,res,next) => {
 exports.create_projects = (req,res,next) => {
     const project = new TeamProjects({
         _id: new mongoose.Types.ObjectId(),
-        _teamid: req.body.teamid || new mongoose.Types.ObjectId(),
+        _teamid: req.params.teamid || new mongoose.Types.ObjectId(),
         title: req.body.title,
         person: req.body.person,
-        due: req.body.due || null,
+        due: req.body.due,
         status: req.body.status,
         content: req.body.content
     }) 

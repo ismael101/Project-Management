@@ -1,69 +1,51 @@
 import axios from 'axios'
 
 export default{
-    get_all_projects(credentials){
-        axios.get(`/personal/${credentials.teamid}`,{
-            headers:{
-                Bearer:credentials.token
-            }
+    getAllProjects({userid,token}){
+        return axios.get(`/personal/${userid}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    get_specific_project(credentials){
-        axios.get(`/personal/${credentials.id}`,{
+    getSpecificProject(credentials){
+        return axios.get(`/personal/${credentials.id}`,{
             headers:{
                 Bearer:credentials.token
             }
-        })
-        .then(res => {
-            return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    create_project(credentials,project){
-        axios.post(`/personal/${credentials.id}`,project,{
-            headers:{
-                Bearer:credentials.token
-            }
+    createProject({id, token},project){
+        return axios.post(`/personal/${id}`,project,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    update_project(credentials){
-        axios.patch(`/personal/${credentials.id}`,{
-            headers:{
-                Bearer:credentials.token
-            }
+    updateProject({id,token}, project){
+        return axios.patch(`/personal/${id}`,project,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    delete_project(credentials){
-        axios.delete(`/personal/${credentials.id}`,{
-            headers:{
-                Bearer:credentials.token
-            }
+    deleteProject({id, token}){
+        return axios.delete(`/personal/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     }
 }

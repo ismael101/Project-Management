@@ -7,4 +7,14 @@ export default{
         })
 
     },
+    getTeam({teamid,token}){
+        return axios.get(`/users/team/${teamid}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
+        }).then(response => {
+            return response.data
+        })
+    }
+
 }

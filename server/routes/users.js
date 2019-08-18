@@ -37,6 +37,6 @@ const storage = multer.diskStorage({
 
 router.post('/login', userRoutes.user_login)
 router.post('/signup', upload.single('profilepic') ,userRoutes.user_signup)
-router.get('/team',auth,userRoutes.user_team)
+router.get('/team/:teamid',auth,userRoutes.user_team)
 
 module.exports = router

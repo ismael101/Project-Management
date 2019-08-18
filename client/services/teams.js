@@ -1,69 +1,55 @@
 import axios from 'axios'
 
 export default{
-    get_all_projects(credentials){
-        axios.get(`/teams/${credentials.teamid}`,{
-            headers:{
-                Bearer:credentials.token
-            }
+    getAllProjects({teamid,token}){
+        return axios.get(`/teams/${teamid}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    get_specific_project(credentials){
-        axios.get(`/teams/${credentials.id}`,{
-            headers:{
-                Bearer:credentials.token
-            }
+    getSpecificProject({id, token}){
+        return axios.get(`/teams/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    create_project(credentials,project){
-        axios.post(`/teams/${credentials.id}`,project,{
-            headers:{
-                Bearer:credentials.token
-            }
+    createProject({id,token},project){
+        return axios.post(`/teams/${id}`,project,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     },
-    update_project(credentials,project){
-        axios.patch(`/teams/${credentials.id}`,project,{
-            headers:{
-                Bearer:credentials.token
-            }
+    updateProject({id,token},project){
+        return axios.patch(`/teams/${id}`,project,{
+            headers: {
+                Authorization: `Bearer ${token}`
+              }
         })
         .then(res => {
             return res.data
         })
-        .catch(err => {
-            return err
-        })
+
     },
-    delete_project(credentials){
-        axios.delete(`/teams/${credentials.id}`,{
+    deleteProject({id,token}){
+        return axios.delete(`/teams/${id}`,{
             headers:{
-                Bearer:credentials.token
+                Bearer:token
             }
         })
         .then(res => {
             return res.data
-        })
-        .catch(err => {
-            return err
         })
     }
 }

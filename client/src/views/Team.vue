@@ -1,6 +1,10 @@
 <template>
     <div class='teams'>
-        <h1 class='subheading grey--text my-10'>Team Members</h1>
+      <v-layout row-wrap justify-space-between>
+        <v-flex xs12 sm6 md6 lg6>
+    <h1 class="subheading grey--text my-10" >Team Members</h1>
+      </v-flex>
+      </v-layout>
         <v-divider></v-divider>
         <v-container class='teamcontent my-5' fluid>
         <v-layout row wrap>
@@ -16,9 +20,7 @@
               <div class="grey--text">{{ person.role }}</div>
             </v-card-text>
             <v-card-actions class='justify-center'>
-              <v-btn text color="grey">
                 <v-icon small left>email</v-icon>
-              </v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>

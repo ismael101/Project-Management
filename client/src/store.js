@@ -9,6 +9,9 @@ export default new Vuex.Store({
     state:{
         token:null,
         username:'Ismael Mohamed',
+        userid:null,
+        teamid:null,
+        userimage:null,
         userMode:false,
         demoMode: false,
         personalProjects:[
@@ -40,6 +43,12 @@ export default new Vuex.Store({
         setUser(state, username){
             state.user = username
         },
+        setUserId(state, id){
+            state.userid = id
+        },
+        setTeamId(state, id){
+            state.teamid = id
+        },
         setPersonalProjects(state, personalProjects){
             state.personalProjects = personalProjects
 
@@ -63,6 +72,12 @@ export default new Vuex.Store({
         },
         setUser({commit}, user){
             commit('setUser', user)
+        },
+        setUserId({commit}, id){
+            commit('setUserId',id)
+        },
+        setTeamId({commit}, id){
+            commit('setTeamId', id)
         },
         setPersonalProjects({commit}, personalProjects){
             commit('setPersonalProjects', personalProjects)
