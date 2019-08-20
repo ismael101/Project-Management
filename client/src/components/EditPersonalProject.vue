@@ -1,17 +1,37 @@
 <template>
-<v-layout justify-center>
+  <div class='AddProject'>
+    <template>
+       <div class='text-center'>
+       <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+    >
+      {{ text }}
+      <v-btn
+        color="blue"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+       </div>
+  <v-layout justify-center>
     <v-dialog v-model="dialog" max-width="500">
       <template v-slot:activator="{ on }">
-        <v-btn color="green lighten-3" outlined v-on="on">Create Project</v-btn>
+        <v-icon v-on='on'>edit</v-icon>
       </template>
       <v-card>
-        <v-card-title class="headline">Add A New Project</v-card-title>
+        <v-card-title class="headline">Edit Personal Project</v-card-title>
         <v-card-text>
-          <v-form>
-            <v-text-field placeholder="Title" outlined>
+          <v-form lazy-validation ref='form'>
+            <v-text-field placeholder="Title" outlined required v-model='form.title' :rules='form.titleRules'>
 
             </v-text-field>
-            <v-textarea placeholder="Content" outlined>
+            <v-select placeholder="Status" outlined :items='items' v-model='form.status' :rules='form.statusRules'>
+
+            </v-select>
+            <v-textarea placeholder="Content" outlined required v-model="form.content" :rules='form.contentRules'>
 
             </v-textarea>
             <v-menu
@@ -24,6 +44,8 @@
         full-width
         max-width="290px"
         min-width="290px"
+        required
+        :rules = form.dueRules
       >
         <template v-slot:activator="{ on }">
           <v-text-field
@@ -32,6 +54,8 @@
             prepend-icon="event"
             readonly
             v-on="on"
+            required
+            :rules = form.dueRules
           ></v-text-field>
         </template>
         <v-date-picker
@@ -39,48 +63,102 @@
           type="date"
           no-title
           scrollable
+          required
+          :rules = form.dueRules
         >
           <v-spacer></v-spacer>
           <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
           <v-btn text color="primary" @click="$refs.menu.save(form.due)">OK</v-btn>
         </v-date-picker>
       </v-menu>
-          </v-form>
+            <v-btn-toggle>
+            <v-btn outlined color='cyan' @click='submit'>Submit</v-btn><v-btn outlined color='red' @click='close'>Close</v-btn>
+            </v-btn-toggle>
+            </v-form>
         </v-card-text>
-        <v-card-actions>
-                        <v-btn class='mx-3' outlined color='cyan'>Submit</v-btn>
-        </v-card-actions>
+
       </v-card>
     </v-dialog>
   </v-layout>
 </template>
-  </div> 
+  </div>
 </template>
 
 <script>
 export default {
+  props:{
+    id:String, 
+  },
   data() {
     return {
+      snackbar: false,
+      timeout: 2000,
+      text:'Personal Project Edited',
       form:{
-         title:'',
-        content:'',
+        title:'',
+        titleRules:[
+          (v) => !!v || 'Title is Required',
+          (v) => v.length <= 7 || 'Title must be at least 7 Characters Long'
+        ],
         due:null,
+        dueRules:[
+         (v) => !!v || 'Due Date is Required', 
+        ],
+        status:'',
+        statusRules:[
+          (v) => !!v || 'Status is Required',
+        ],
+        content:'',
+        contentRules:[
+          (v) => !!v || 'Content is Required',
+          (v) => v.length >= 10 || 'Content must be at least 10 Characters Long'
+        ]
+       
       },
       dialog:false,
-      menu:false
+      menu:false,
+      items:['ongoing','complete','overdue']
     }
   },
   methods:{
     submit(){
+      this.$personal.updateProject({id: this.id, token: this.$store.state.token},{title: this.form.title,due: this.form.due, status: this.form.status, content: this.form.content})
+                .then(result => {
+                  console.log(result)
+                  this.$personal.getAllProjects({teamid: this.$store.state.teamid, token: this.$store.state.token})
+                            .then(projects => {
+                                this.$store.dispatch('setPersonalProjects', projects)
+                                this.snackbar = true
+                            }) 
+                            .catch(err => {
+                              console.log(err)
+                            })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+
       this.dialog = false
-      console.log(this.form)
+      
     },
     close(){
       this.dialog = false
-      this.form.title = '',
-      this.form.content = '',
-      this.form.due = null
+      this.$refs.form.reset()
+    },
+    projects(){
+        let editproject = this.$store.state.personalProjects.filter(project => {
+            return project._id == this.id
+        })
+        this.form.title = editproject[0].title
+        this.form.due = editproject[0].due
+        this.form.status = editproject[0].status
+        this.form.content = editproject[0].content
+
+
     }
+  },
+  mounted(){
+      this.projects()
   }
 }
 </script>

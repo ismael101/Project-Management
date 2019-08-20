@@ -20,16 +20,6 @@
                 </v-flex>
             </v-layout>
         </v-container>
-        <div>
-            <v-progress-circular
-            class='loader'
-            v-if='this.loading'
-            :size="70"
-            :width="7"
-            color="purple"
-            indeterminate
-            ></v-progress-circular>
-        </div>
     </div>
 </template>
 
@@ -41,7 +31,6 @@ export default {
     data(){
         return{
             error:false,
-            loading:false,
             form:{
                 username:'',
                 password:''
@@ -60,16 +49,15 @@ export default {
                 this.$store.dispatch('setUser', userinfo.username)
                 this.$store.dispatch('setUserId', userinfo.id)
                 this.$store.dispatch('setTeamId', userinfo.teamid)
+                this.$store.dispatch('setImage', userinfo.profilepic)
                 console.log(this.$store.state)
                 this.$users.getTeam({teamid:this.$store.state.teamid, token: this.$store.state.token})
                             .then(team => {
                                     this.$store.dispatch('setTeamMembers', team)
-                                    console.log(this.$store.state.teamMembers)
                             })
                             .catch(err => {
                                     console.log(err)
                             })
-                /*
                 this.$teams.getAllProjects({teamid: this.$store.state.teamid, token: this.$store.state.token})
                             .then(projects => {
                                 this.$store.dispatch('setTeamProjects', projects)
@@ -80,13 +68,10 @@ export default {
                 this.$personal.getAllProjects({userid: this.$store.state.userid, token: this.$store.state.token})
                               .then(projects => {
                                   this.$store.dispatch('setPersonalProjects', projects)
-                                  console.log('got projects: ', projects)
                               })
                               .catch(err => {
                                   console.log(err)
                               })
-                this.loading = false
-                */
                 this.$store.dispatch('setUserMode', true)
                 this.$router.push({name:'dashboard'})
                 
@@ -100,7 +85,13 @@ export default {
         demo(){
             this.$store.dispatch('setDemoMode', true)
             this.$router.push({name:'dashboard'})
+        },
+        clear(){
+            localStorage.clear()
         }
+
+    },
+    mounted(){
     }
 }
 </script>

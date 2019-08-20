@@ -1,6 +1,21 @@
 <template>
   <div class='AddProject'>
     <template>
+       <div class='text-center'>
+       <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+    >
+      {{ text }}
+      <v-btn
+        color="blue"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+       </div>
   <v-layout justify-center>
     <v-dialog v-model="dialog" max-width="500">
       <template v-slot:activator="{ on }">
@@ -77,6 +92,9 @@
 export default {
   data() {
     return {
+      snackbar: false,
+      timeout: 2000,
+      text: 'Team Project Added',
       form:{
         title:'',
         titleRules:[
@@ -109,10 +127,19 @@ export default {
   },
   methods:{
     submit(){
-      let teamProjects = [...this.$store.state.teamProjects,this.form]
-      this.$store.dispatch('setTeamProjects', teamProjects)
-      console.log(teamProjects)
-      this.dialog = false
+      this.$teams.createProject({id: this.$store.state.teamid, token: this.$store.state.token}, this.form)
+                .then(result => {
+                  console.log(result)
+                  this.$teams.getAllProjects({teamid: this.$store.state.teamid, token: this.$store.state.token})
+                            .then(projects => {
+                              this.$store.dispatch('setTeamProjects', projects)
+                              this.snackbar = true
+                            })
+                  this.dialog = false
+                })
+                .catch(err => {
+                  console.log(err)
+                })
       
     },
     close(){

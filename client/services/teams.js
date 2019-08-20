@@ -45,7 +45,7 @@ export default{
     deleteProject({id,token}){
         return axios.delete(`/teams/${id}`,{
             headers:{
-                Bearer:token
+                Authorization:`Bearer ${token}`
             }
         })
         .then(res => {

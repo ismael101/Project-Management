@@ -1,6 +1,21 @@
 <template>
   <div class='AddProject'>
     <template>
+       <div class='text-center'>
+       <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+    >
+      {{ text }}
+      <v-btn
+        color="blue"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+       </div>
   <v-layout justify-center>
     <v-dialog v-model="dialog" max-width="500">
       <template v-slot:activator="{ on }">
@@ -59,13 +74,11 @@
           <v-btn text color="primary" @click="$refs.menu.save(form.due)">OK</v-btn>
         </v-date-picker>
       </v-menu>
-          </v-form>
+            <v-btn-toggle>
+            <v-btn outlined color='cyan' @click='submit'>Submit</v-btn><v-btn outlined color='red' @click='close'>Close</v-btn>
+            </v-btn-toggle>
+            </v-form>
         </v-card-text>
-        <v-card-actions>
-          <div class='mx-3'>
-                <v-btn outlined color='cyan' @click='submit'>Submit</v-btn><v-btn outlined color='red' @click='close'>Close</v-btn>
-          </div>
-        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-layout>
@@ -76,10 +89,13 @@
 <script>
 export default {
   props:{
-    id:Number, 
+    id:String, 
   },
   data() {
     return {
+      snackbar: false,
+      timeout: 2000,
+      text: 'Team Project Edited',
       form:{
         title:'',
         titleRules:[
@@ -101,7 +117,7 @@ export default {
         content:'',
         contentRules:[
           (v) => !!v || 'Content is Required',
-          (v) => v.length <= 10 || 'Content must be at least 10 Characters Long'
+          (v) => v.length >= 10 || 'Content must be at least 10 Characters Long'
         ]
        
       },
@@ -112,28 +128,38 @@ export default {
   },
   methods:{
     submit(){
-      let projects = this.$store.state.teamProjects.filter(project => {
-        return project.id != this.id
-      })
+      this.$teams.updateProject({id: this.id, token: this.$store.state.token},{title: this.form.title, person: this.form.person, due: this.form.due, status: this.form.status, content: this.form.content})
+                .then(result => {
+                  console.log(result)
+                  this.$teams.getAllProjects({teamid: this.$store.state.teamid, token: this.$store.state.token})
+                            .then(projects => {
+                                this.$store.dispatch('setTeamProjects', projects)
+                                this.snackbar = true
+                            }) 
+                            .catch(err => {
+                              console.log(err)
+                            })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
 
-      let newprojects = [...projects,this.form]
-      this.$store.dispatch('setTeamProjects', newprojects)
       this.dialog = false
       
     },
     close(){
-      this.dialog = false 
+      this.dialog = false
+      this.$refs.form.reset()
     },
     projects(){
-        let project = this.$store.state.teamProjects.filter(project => {
-            return project.id == this.id
+        let editproject = this.$store.state.teamProjects.filter(project => {
+            return project._id == this.id
         })
-        console.log(this.$store.state.teamProjects.indexOf(project.id))
-        this.form.title = project[0].title
-        this.form.person = project[0].person
-        this.form.due = project[0].due
-        this.form.status = project[0].status
-        this.form.content = project[0].content
+        this.form.title = editproject[0].title
+        this.form.person = editproject[0].person
+        this.form.due = editproject[0].due
+        this.form.status = editproject[0].status
+        this.form.content = editproject[0].content
 
 
     }

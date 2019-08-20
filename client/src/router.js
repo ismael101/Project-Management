@@ -21,6 +21,9 @@ export default new Router({
         if(from.name === 'dashboard' || from.name ==='team' || from.name === 'personal'){
           const answer = window.confirm('Are You Sure You Want To Sign Out?')
           if(answer){
+            store.dispatch('setToken', null)
+            store.dispatch('setUserMode', false)
+            store.dispatch('setDemoMode',false)
             next()
           }else{
             next(false)
@@ -28,6 +31,9 @@ export default new Router({
 
         }else{
           next()
+        }
+        if(store.state.userMode === true || store.state.demoMode === true){
+          next({name:'dashboard'})
         }
       }
     },
@@ -47,7 +53,7 @@ export default new Router({
     },
     {
       path: '/personal',
-      name: 'projects',
+      name: 'personal',
       component:PersonalProjects,
       beforeEnter: (to,from,next) => {
         if(store.state.userMode == false && store.state.demoMode == false){

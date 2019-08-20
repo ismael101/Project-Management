@@ -17,11 +17,11 @@
           <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="200">
-            <img class="text-lg-center" :src="avatar">
+            <img class="text-lg-center" :src="this.$store.state.userimage">
           </v-avatar>
         </v-flex>
         <v-flex class='mt-2'>
-           <p class="white--text subheading mt-5">{{teamlead}}</p>
+           <p class="white--text subheading mt-5">{{this.$store.state.user}}</p>
         </v-flex>
         <v-flex class="mt-4 mb-6">
         </v-flex>
@@ -76,15 +76,12 @@ export default {
                     route:'/team'
                 }
             ],
-          teamlead:this.$store.state.username,
-          avatar:'/avatar5.png'
+          teamlead:this.$store.state.user,
+          avatar: this.$store.state.userimage
         }
     },
     methods:{
       signout(){
-        this.$store.dispatch('setToken', null)
-        this.$store.dispatch('setUserMode', false)
-        this.$store.dispatch('setDemoMode',false)
         this.$router.push({name:'login'})
       }
     }

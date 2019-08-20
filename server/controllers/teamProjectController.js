@@ -1,12 +1,10 @@
 const mongoose = require('mongoose')
 const TeamProjects = require('../models/teamProjects')
 
-exports.get_all_projects = (req,res,next) => {
-    TeamProjects.find()
+exports.getAllProjects = (req,res,next) => {
+    TeamProjects.find({_teamid: req.params.teamid})
     .then(projects => {
-        res.status(200).json({
-            projects:projects
-        })
+        res.status(200).json(projects)
     })
     .catch(err => {
         res.status(400).json({
@@ -14,7 +12,7 @@ exports.get_all_projects = (req,res,next) => {
         })
     })
 }
-exports.create_projects = (req,res,next) => {
+exports.createProjects = (req,res,next) => {
     const project = new TeamProjects({
         _id: new mongoose.Types.ObjectId(),
         _teamid: req.params.teamid || new mongoose.Types.ObjectId(),
@@ -26,10 +24,7 @@ exports.create_projects = (req,res,next) => {
     }) 
     project.save()
     .then(project => {
-        res.status(200).json({
-            message:'Project Created',
-            project: project
-        })
+        res.status(200).json(project)
     })
     .catch(err => {
         res.status(400).json({
@@ -38,11 +33,23 @@ exports.create_projects = (req,res,next) => {
         })
     })
 }
-exports.get_specific_project = (req,res,next) => {
-    TeamProjects.findById(req.params.id)
+exports.getSpecificProject = (req,res,next) => {
+    TeamProjects.findById(req.params.projectid)
     .then(project => {
+        res.status(200).json(project)
+    })
+    .catch(err => {
+        res.status(400).json({
+            error:err
+        })
+    })
+}
+
+exports.updateProject = (req,res,next) => {
+    TeamProjects.findOneAndUpdate({_id:req.params.projectid},{$set:req.body})
+    .then(() => {
         res.status(200).json({
-            project:project
+            message: 'Project Updated'
         })
     })
     .catch(err => {
@@ -52,23 +59,8 @@ exports.get_specific_project = (req,res,next) => {
     })
 }
 
-exports.update_project = (req,res,next) => {
-    TeamProjects.findOneAndUpdate({_id:req.params.id},{$set:req.body})
-    .then(project => {
-        res.status(200).json({
-            message:'Project Updated',
-            project:project
-        })
-    })
-    .catch(err => {
-        res.status(400).json({
-            error:err
-        })
-    })
-}
-
-exports.delete_project = (req,res,next) => {
-    TeamProjects.findOneAndDelete(req.params.id)
+exports.deleteProject = (req,res,next) => {
+    TeamProjects.findOneAndDelete(req.params.projectid)
     .then(() => {
         res.status(200).json({
             message:'Project Deleted'

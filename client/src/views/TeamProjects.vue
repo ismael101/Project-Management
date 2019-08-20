@@ -10,29 +10,7 @@
     </v-layout>
     <v-divider></v-divider>
      <v-container class="my-5">
-
-      <v-layout row justify-start class="mb-3">
-        <v-tooltip top>
-          <template v-slot:activator='{on}'>
-          <v-btn small text color="grey" v-on='on' @click="sortBy('title')" slot="activator">
-            <v-icon small left>folder</v-icon>
-            <span class="caption text-lowercase">By project name</span>
-          </v-btn>
-          </template>
-          <span>Sort by project name</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator='{on}'>
-          <v-btn small text color="grey" v-on='on' @click="sortBy('person')" slot="activator">
-            <v-icon small left>person</v-icon>
-            <span class="caption text-lowercase">By Person</span>
-          </v-btn>
-          </template>
-          <span>Sort by project author</span>
-        </v-tooltip>
-      </v-layout>
-      
-      <v-card flat v-for="project in this.$store.state.teamProjects" :key="project.id">
+      <v-card flat v-for="project in this.$store.state.teamProjects" :key="project._id" class='project'>
         <v-layout row wrap :class="`pa-3 project ${project.status}`">
           <v-flex xs12 md4>
             <div class="caption grey--text text-center">Project title</div>
@@ -44,17 +22,17 @@
           </v-flex>
           <v-flex xs4 sm3 md2>
             <div class="caption grey--text text-center">Due by</div>
-            <div class="text-center">{{ project.due }}</div>
+            <div class="text-center">{{ project.due.substring(0,10) }}</div>
           </v-flex>
           <v-flex xs4 sm3 md2>
             <div class="center">
-              <v-chip small :class="`${project.status} white--text my-2 caption`">{{ project.status }}</v-chip>
+              <v-chip small outlined  color='cyan' :class="`${project.status}`">{{ project.status }}</v-chip>
             </div>
           </v-flex>
           <v-flex xs4 sm3 md2>
             <v-btn-toggle class='mt-2 text-center'>
-              <EditTeamProject v-bind:id="project.id"></EditTeamProject>
-              <v-icon @click='deleteProject'>delete</v-icon>
+              <EditTeamProject v-bind:id="project._id"></EditTeamProject>
+              <v-icon @click='deleteProject(project._id)'>delete</v-icon>
             </v-btn-toggle>
           </v-flex>
         </v-layout>
@@ -80,21 +58,26 @@ export default {
     }
   },
   methods: {
-    sortBy(prop) {
-      this.$store.state.teamProjects.sort((a,b) => a[prop] < b[prop] ? -1 : 1)
-    },
-    deleteProject(){
-
-    },
-    fetchProjects(){
-      if(this.$store.state.userMode){
-        this.$
+    deleteProject(projectid){
+      const answer = window.confirm('Are You Sure You Want To Delete This Project?')
+      if(answer){
+        this.$teams.deleteProject({id: projectid, token: this.$store.state.token})
+                    .then(res => {
+                      console.log(res)
+                      this.$teams.getAllProjects({teamid: this.$store.state.teamid, token: this.$store.state.token})
+                                   .then(projects => {
+                                    this.$store.dispatch('setTeamProjects', projects)
+                                  })
+                                  .catch(err => {
+                                      console.log(err)
+                                  })
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    })
       }
+    },
     }
-  },
-  mounted(){
-    
-  }
   
 }
 </script>

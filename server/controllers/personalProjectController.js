@@ -1,12 +1,10 @@
 const mongoose = require('mongoose')
 const PersonalProjects = require('../models/personalProjects')
 
-exports.get_all_projects = (req,res,next) => {
+exports.getAllProjects = (req,res,next) => {
     PersonalProjects.find()
     .then(projects => {
-        res.status(201).json({
-            projects:projects
-        })
+        res.status(201).json(projects)
     })
     .catch(err => {
         res.status(400).json({
@@ -14,7 +12,7 @@ exports.get_all_projects = (req,res,next) => {
         })
     })
 }
-exports.create_projects = (req,res,next) => {
+exports.createProjects = (req,res,next) => {
     const project = new PersonalProjects({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
@@ -24,10 +22,7 @@ exports.create_projects = (req,res,next) => {
     }) 
     project.save()
     .then(project => {
-        res.status(201).json({
-            message:'Project Created',
-            project: project
-        })
+        res.status(201).json(project)
     })
     .catch(err => {
         res.status(400).json({
@@ -36,11 +31,23 @@ exports.create_projects = (req,res,next) => {
         })
     })
 }
-exports.get_specific_project = (req,res,next) => {
+exports.getSpecificProject = (req,res,next) => {
     PersonalProjects.findById(req.params.id)
     .then(project => {
+        res.status(201).json(project)
+    })
+    .catch(err => {
+        res.status(400).json({
+            error:err
+        })
+    })
+}
+
+exports.updateProject = (req,res,next) => {
+    PersonalProjects.findOneAndUpdate({_id:req.params.projectid},{$set:req.body})
+    .then(() => {
         res.status(201).json({
-            project:project
+            message: 'Project Updated'
         })
     })
     .catch(err => {
@@ -50,22 +57,7 @@ exports.get_specific_project = (req,res,next) => {
     })
 }
 
-exports.update_project = (req,res,next) => {
-    PersonalProjects.findOneAndUpdate({_id:req.params.id},{$set:req.body})
-    .then(project => {
-        res.status(201).json({
-            message:'Project Updated',
-            project:project
-        })
-    })
-    .catch(err => {
-        res.status(400).json({
-            error:err
-        })
-    })
-}
-
-exports.delete_project = (req,res,next) => {
+exports.deleteProject = (req,res,next) => {
     PersonalProjects.findOneAndDelete(req.params.id)
     .then(() => {
         res.status(201).json({

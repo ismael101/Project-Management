@@ -2,6 +2,21 @@
   <div class='AddProject'>
     <template>
   <v-layout justify-center>
+     <div class='text-center'>
+       <v-snackbar
+      v-model="snackbar"
+      :timeout="timeout"
+    >
+      {{ text }}
+      <v-btn
+        color="blue"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+       </div>
     <v-dialog v-model="dialog" max-width="500">
       <template v-slot:activator="{ on }">
         <v-btn color="green lighten-3" outlined v-on="on">Create Personal Project</v-btn>
@@ -9,7 +24,7 @@
       <v-card>
         <v-card-title class="headline">Add A New Project</v-card-title>
         <v-card-text>
-          <v-form lazy-validation ref='form'>
+          <v-form ref='form'>
             <v-text-field placeholder="Title" outlined required :counter='6' v-model='form.title' :rules='form.titleRules'>
 
             </v-text-field>
@@ -60,7 +75,7 @@
         </v-card-text>
         <v-card-actions>
           <div class='mx-3'>
-                <v-btn outlined color='cyan' @click='submit'>Submit</v-btn><v-btn outlined color='red' @click='close'>Close</v-btn>
+                <v-btn outlined color='cyan' @click='submit' :disabled="!valid">Submit</v-btn><v-btn outlined color='red' @click='close'>Close</v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -74,6 +89,10 @@
 export default {
   data() {
     return {
+      valid: true,
+      snackbar: false,
+      timeout: 2000,
+      text: 'Personal Project Added',
       form:{
         title:'',
         titleRules:[
@@ -101,15 +120,27 @@ export default {
       },
       dialog:false,
       menu:false,
+      snackbar:false,
+
       items:['ongoing','complete','overdue']
     }
   },
   methods:{
     submit(){
-      let personalProjects = [...this.$store.state.personalProjects,this.form]
-      this.$store.dispatch('setPersonalProjects',personalProjects)
-      this.dialog = false
-      
+        this.$personal.createProject({id: this.$store.state.userid, token:this.$store.state.token}, this.form)
+                      .then(result => {
+                        console.log(result)
+                          this.dialog = false
+                          this.$personal.getAllProjects({userid: this.$store.state.userid, token: this.$store.state.token})
+                          .then(projects => {
+                            this.$store.dispatch('setPersonalProjects',projects)
+                            this.snackbar = true
+                          })
+                      })
+                      .catch(err => {
+                        console.log(err)
+                      })
+          
     },
     close(){
       this.form.title = '',

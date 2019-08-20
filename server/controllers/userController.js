@@ -59,7 +59,7 @@ exports.user_login = (req,res,next) => {
         bcrypt.compare(req.body.password,user[0].password)
         .then(result => {
             if(result){
-                const token = jwt.sign({id: user[0].id, teamid: user[0]._teamid,username:user[0].username,email:user[0].email},config.encrypt_config.key,{expiresIn:'3h'})
+                const token = jwt.sign({id: user[0].id, teamid: user[0]._teamid,username:user[0].username,email:user[0].email, profilepic:user[0].profilepic},config.encrypt_config.key,{expiresIn:'3h'})
                 res.status(200).json({
                     message:'Auth Succesfull',
                     token:token
